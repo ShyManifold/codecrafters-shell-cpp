@@ -16,13 +16,13 @@ int main()
   {
 
     std::cout << "$ ";
-
+    //TO DO:  Use a unordered map to hold the commands
     std::string input;
     std::getline(std::cin, input);
-    std::cout << input << ": command not found" << std::endl;
-
     if (input == "exit 0")
       finished = true;
+    else std::cout << input << ": command not found" << std::endl;
   }
+
   return 0;
 }
