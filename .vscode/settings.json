@@ -1,0 +1,7 @@
+{
+    "files.associations": {
+        "*.cppm": "cpp",
+        "sstream": "cpp",
+        "ios": "cpp"
+    }
+}
