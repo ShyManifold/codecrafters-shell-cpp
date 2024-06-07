@@ -13,10 +13,7 @@ class Application
 public:
     Application();
     ~Application(){};
-    void run();
-    void fetch();
-    void call();
-
+    void m_run();
 private:
     bool m_finished = false;
     std::unordered_map<std::string, std::function<void()>> m_supportedCommands;
@@ -24,6 +21,10 @@ private:
     std::string m_command;
     std::vector<std::string> m_commandArguments;
 
+    void m_fetch();
+    void m_call();
+    
     // Command response functions
-    void echo();
+    void m_type();
+    void m_echo();
 };

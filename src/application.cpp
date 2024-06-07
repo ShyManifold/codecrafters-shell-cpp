@@ -7,24 +7,27 @@ Application::Application::Application()
     std::cerr << std::unitbuf;
 
     // Adding all supported commands
-    
+
     m_supportedCommands["exit"] = [this]()
     { m_finished = true; };
 
     m_supportedCommands["echo"] = [this]()
-    { echo(); };
+    { m_echo(); };
+
+    m_supportedCommands["type"] = [this]()
+    { m_type(); };
 }
 
-void Application::run()
+void Application::m_run()
 {
     while (!m_finished)
     {
-        fetch();
-        call();
+        m_fetch();
+        m_call();
     }
 }
 
-void Application::fetch()
+void Application::m_fetch()
 {
     std::cout << "$ ";
     std::string input;
@@ -42,7 +45,7 @@ void Application::fetch()
     }
 }
 
-void Application::call()
+void Application::m_call()
 {
     if (m_supportedCommands.find(m_command) != m_supportedCommands.end())
     {
@@ -55,7 +58,25 @@ void Application::call()
     m_commandArguments.clear();
 }
 
-void Application::echo()
+void Application::m_type()
+{
+    bool found = false;
+
+    for (auto it = m_supportedCommands.begin(); it != m_supportedCommands.end(); ++it)
+    {
+        if (it->first == m_commandArguments[0])
+        {
+            found = true;
+            break;
+        }
+    }
+    if (found)
+        std::cout << m_commandArguments[0] << " is a shell builtin" << std::endl;
+    else
+        std::cout << m_commandArguments[0] << " not found" << std::endl;
+}
+
+void Application::m_echo()
 {
     std::string response = "";
 

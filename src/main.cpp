@@ -4,7 +4,7 @@ int main()
 {
   Application app;
 
-  app.run();
+  app.m_run();
 
   return 0;
 }
