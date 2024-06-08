@@ -14,15 +14,6 @@ Application::Application::Application(std::string path)
 
     while (std::getline(ss, p, ':'))
     {
-
-#ifdef _WIN32
-        // Replace forward slashes with backslashes on Windows
-        std::replace(p.begin(), p.end(), '/', '\\');
-#else
-        // Replace backslashes with forward slashes on Unix-like systems
-        std::replace(p.begin(), p.end(), '\\', '/');
-#endif
-
         m_paths.push_back(p);
     }
 
