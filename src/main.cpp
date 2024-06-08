@@ -11,10 +11,11 @@ int main(int argc, char *argv[])
     // Check if the argument starts with "PATH="
     if (strncmp(argv[i], "PATH=", 5) == 0)
     {
-      pathArg = std::string(argv[i] + 6,strlen(argv[i]) - 7); // Skip "PATH=" prefix
+      pathArg = std::string(argv[i] + 6, strlen(argv[i]) - 7); // Skip "PATH=" prefix
     }
   }
 
+  std::cout << pathArg << std::endl;
 
   Application app(pathArg);
 
