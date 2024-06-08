@@ -1,10 +1,19 @@
 #include "application.h"
 
-Application::Application::Application()
+Application::Application::Application(std::string path)
 {
     // Flush after every std::cout / std:cerr
     std::cout << std::unitbuf;
     std::cerr << std::unitbuf;
+
+    // Parsing the paths
+
+    std::stringstream ss(path);
+
+    std::string p;
+
+    while (std::getline(ss, p, ':'))
+        m_paths.push_back(p);
 
     // Adding all supported commands
 
@@ -71,9 +80,30 @@ void Application::m_type()
         }
     }
     if (found)
+    {
         std::cout << m_commandArguments[0] << " is a shell builtin" << std::endl;
-    else
-        std::cout << m_commandArguments[0] << " not found" << std::endl;
+        return;
+    }
+
+    std::filesystem::path filepath;
+
+    for (size_t i = 0; i < m_paths.size(); i++)
+    {
+        filepath = m_paths[i];
+        filepath /= m_commandArguments[0];
+        if (std::filesystem::exists(filepath))
+        {
+            found = true;
+            break;
+        }
+    }
+    if (found)
+    {
+        std::cout << m_commandArguments[0] << " is " << filepath << std::endl;
+        return;
+    }
+
+    std::cout << m_commandArguments[0] << " not found" << std::endl;
 }
 
 void Application::m_echo()
