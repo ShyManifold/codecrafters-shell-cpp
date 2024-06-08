@@ -11,12 +11,18 @@ Application::Application::Application(std::string path)
     std::stringstream ss(path);
 
     std::string p;
-
+#ifdef _WIN32
+    while (std::getline(ss, p, ';'))
+    {
+        m_paths.push_back(p);
+    }
+#else
     while (std::getline(ss, p, ':'))
     {
         m_paths.push_back(p);
     }
 
+#endif
     // Adding all supported commands
 
     m_supportedCommands["exit"] = [this]()
@@ -92,15 +98,22 @@ void Application::m_type()
     {
         if (fs::exists(path) && fs::is_directory(path))
         {
-            for (const auto &entry : fs::directory_iterator(path))
+            try
             {
-                if (fs::is_regular_file(entry.path()))
-                // The stem is the filename without the extension
-                if (entry.path().stem().string() == command)
+                for (const auto &entry : fs::directory_iterator(path))
                 {
-                    std::cout << command << " is " << path / command << std::endl;
-                    return;
+                    if (fs::is_regular_file(entry.path()))
+                        // The stem is the filename without the extension
+                        if (entry.path().stem().string() == command)
+                        {
+                            std::cout << command << " is " << path / command << std::endl;
+                            return;
+                        }
                 }
+            }
+            catch (const std::exception &e)
+            {
+                std::cerr << e.what() << '\n';
             }
         }
     }
