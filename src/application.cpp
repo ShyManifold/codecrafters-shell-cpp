@@ -91,6 +91,9 @@ void Application::m_type()
     {
         filepath = m_paths[i];
         filepath += m_commandArguments[0];
+
+        std::cout << filepath << std::endl;
+
         if (std::filesystem::exists(filepath))
         {
             found = true;
