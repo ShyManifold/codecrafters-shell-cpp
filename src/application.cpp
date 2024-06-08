@@ -90,7 +90,7 @@ void Application::m_type()
     for (size_t i = 0; i < m_paths.size(); i++)
     {
         filepath = m_paths[i];
-        filepath /= m_commandArguments[0];
+        filepath += m_commandArguments[0];
         if (std::filesystem::exists(filepath))
         {
             found = true;
