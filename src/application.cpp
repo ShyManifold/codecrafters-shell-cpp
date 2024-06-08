@@ -92,16 +92,18 @@ void Application::m_type()
     {
         if (fs::exists(path) && fs::is_directory(path))
         {
+            std::cerr << "Searching in: " << path << " for " << command << std::endl;
+
             for (const auto &entry : fs::directory_iterator(path))
             {
                 if (fs::is_regular_file(entry.path()))
-
-                    // The stem is the filename without the extension
-                    if (entry.path().stem().string() == command)
-                    {
-                        std::cout << command << " is " << path << std::endl;
-                        return;
-                    }
+                    std::cerr << "Found file: " << entry.path().filename().string() << std::endl;
+                // The stem is the filename without the extension
+                if (entry.path().stem().string() == command)
+                {
+                    std::cout << command << " is " << path << std::endl;
+                    return;
+                }
             }
         }
     }
