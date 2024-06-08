@@ -106,7 +106,7 @@ void Application::m_type()
                         // The stem is the filename without the extension
                         if (entry.path().stem().string() == command)
                         {
-                            std::cout << command << " is " << path.string() + command << std::endl;
+                            std::cout << command << " is " << path / command;
                             return;
                         }
                 }
