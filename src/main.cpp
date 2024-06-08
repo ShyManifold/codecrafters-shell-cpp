@@ -4,19 +4,25 @@
 
 int main(int argc, char *argv[])
 {
-  std::string pathArg = ".";
+  std::string pathArg;
+
+  bool foundPathVariable = false;
 
   for (int i = 1; i < argc; ++i)
   {
     // Check if the argument starts with "PATH="
     if (strncmp(argv[i], "PATH=", 5) == 0)
     {
-      pathArg = std::string(argv[i] + 6, strlen(argv[i]) - 7); // Skip "PATH=" prefix
+      foundPathVariable = true;
+      pathArg = std::string(argv[i] + 5, strlen(argv[i]) - 5); // Skip "PATH=" prefix
     }
   }
 
-  std::cout << pathArg << std::endl;
-
+  if (!foundPathVariable)
+  {
+    pathArg = "";
+  }
+  
   Application app(pathArg);
 
   app.m_run();

@@ -16,7 +16,7 @@ private:
 
     std::string m_command;
     std::vector<std::string> m_commandArguments;
-
+    
     //Utility functions
     void m_fetch();
     void m_call();

@@ -13,7 +13,18 @@ Application::Application::Application(std::string path)
     std::string p;
 
     while (std::getline(ss, p, ':'))
+    {
+
+#ifdef _WIN32
+        // Replace forward slashes with backslashes on Windows
+        std::replace(p.begin(), p.end(), '/', '\\');
+#else
+        // Replace backslashes with forward slashes on Unix-like systems
+        std::replace(p.begin(), p.end(), '\\', '/');
+#endif
+
         m_paths.push_back(p);
+    }
 
     // Adding all supported commands
 
@@ -71,9 +82,11 @@ void Application::m_type()
 {
     bool found = false;
 
+    std::string command = m_commandArguments[0];
+
     for (auto it = m_supportedCommands.begin(); it != m_supportedCommands.end(); ++it)
     {
-        if (it->first == m_commandArguments[0])
+        if (it->first == command)
         {
             found = true;
             break;
@@ -81,32 +94,27 @@ void Application::m_type()
     }
     if (found)
     {
-        std::cout << m_commandArguments[0] << " is a shell builtin" << std::endl;
+        std::cout << command << " is a shell builtin" << std::endl;
         return;
     }
-
-    std::filesystem::path filepath;
-
-    for (size_t i = 0; i < m_paths.size(); i++)
+    for (const auto &path : m_paths)
     {
-        filepath = m_paths[i];
-        filepath += m_commandArguments[0];
-
-        std::cout << filepath << std::endl;
-
-        if (std::filesystem::exists(filepath))
+        if (fs::exists(path) && fs::is_directory(path))
         {
-            found = true;
-            break;
+            for (const auto &entry : fs::directory_iterator(path))
+            {
+                if (fs::is_regular_file(entry.path()))
+
+                    // The stem is the filename without the extension
+                    if (entry.path().stem().string() == command)
+                    {
+                        std::cout << command << " is " << path << std::endl;
+                        return;
+                    }
+            }
         }
     }
-    if (found)
-    {
-        std::cout << m_commandArguments[0] << " is " << filepath << std::endl;
-        return;
-    }
-
-    std::cout << m_commandArguments[0] << " not found" << std::endl;
+    std::cout << command << " not found" << std::endl;
 }
 
 void Application::m_echo()
