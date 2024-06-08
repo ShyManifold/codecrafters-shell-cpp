@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "application.h"
+#include <cstring>
 
 int main(int argc, char *argv[])
 {
