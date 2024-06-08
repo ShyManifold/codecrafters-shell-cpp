@@ -96,9 +96,9 @@ void Application::m_type()
             {
                 if (fs::is_regular_file(entry.path()))
                 // The stem is the filename without the extension
-                if (entry.path().filename().string() == command)
+                if (entry.path().stem().string() == command)
                 {
-                    std::cout << command << " is " << path << std::endl;
+                    std::cout << command << " is " << path / command << std::endl;
                     return;
                 }
             }
