@@ -16,10 +16,11 @@ private:
 
     std::string m_command;
     std::vector<std::string> m_commandArguments;
-    
-    //Utility functions
+
+    // Utility functions
     void m_fetch();
     void m_call();
+    bool m_findExecutable(std::string &command, fs::path &result);
 
     // Command response functions
     void m_type();

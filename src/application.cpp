@@ -64,15 +64,56 @@ void Application::m_fetch()
 
 void Application::m_call()
 {
+    fs::path pathToExcecutable;
+
     if (m_supportedCommands.find(m_command) != m_supportedCommands.end())
     {
         m_supportedCommands[m_command]();
+    }
+    else if (m_findExecutable(m_command, pathToExcecutable))
+    {
+        std::string ArgV = pathToExcecutable.string();
+        
+        for (size_t i = 0; i < m_commandArguments.size(); i++)
+        {
+            ArgV += " " + m_commandArguments[i];
+        }
+
+        system(ArgV.c_str());
     }
     else
         std::cout << m_command << ": command not found" << std::endl;
 
     m_command = "";
     m_commandArguments.clear();
+}
+
+bool Application::m_findExecutable(std::string &command, fs::path &result)
+{
+    for (const auto &path : m_paths)
+    {
+        if (fs::exists(path) && fs::is_directory(path))
+        {
+            try
+            {
+                for (const auto &entry : fs::directory_iterator(path))
+                {
+                    if (fs::is_regular_file(entry.path()))
+                        // The stem is the filename without the extension
+                        if (entry.path().stem().string() == command)
+                        {
+                            result = entry.path();
+                            return true;
+                        }
+                }
+            }
+            catch (const std::exception &e)
+            {
+                std::cerr << e.what() << '\n';
+            }
+        }
+    }
+    return false;
 }
 
 void Application::m_type()
@@ -94,29 +135,15 @@ void Application::m_type()
         std::cout << command << " is a shell builtin" << std::endl;
         return;
     }
-    for (const auto &path : m_paths)
+    fs::path pathToCommand;
+    found = m_findExecutable(command, pathToCommand);
+
+    if (found)
     {
-        if (fs::exists(path) && fs::is_directory(path))
-        {
-            try
-            {
-                for (const auto &entry : fs::directory_iterator(path))
-                {
-                    if (fs::is_regular_file(entry.path()))
-                        // The stem is the filename without the extension
-                        if (entry.path().stem().string() == command)
-                        {
-                            std::cout << command << " is " << entry.path().string() << std::endl;
-                            return;
-                        }
-                }
-            }
-            catch (const std::exception &e)
-            {
-                std::cerr << e.what() << '\n';
-            }
-        }
+        std::cout << command << " is " << pathToCommand.string() << std::endl;
+        return;
     }
+
     std::cout << command << " not found" << std::endl;
 }
 
