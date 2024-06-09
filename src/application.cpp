@@ -6,6 +6,8 @@ Application::Application::Application(std::string path)
     std::cout << std::unitbuf;
     std::cerr << std::unitbuf;
 
+    // Initializing the current working directory
+    m_currentWorkingDirectory = fs::current_path();
     // Parsing the paths
 
     std::stringstream ss(path);
@@ -33,6 +35,12 @@ Application::Application::Application(std::string path)
 
     m_supportedCommands["type"] = [this]()
     { m_type(); };
+
+    m_supportedCommands["pwd"] = [this]()
+    { m_pwd(); };
+
+    m_supportedCommands["cd"] = [this]()
+    { m_cd(); };
 }
 
 void Application::m_run()
@@ -73,7 +81,7 @@ void Application::m_call()
     else if (m_findExecutable(m_command, pathToExcecutable))
     {
         std::string ArgV = pathToExcecutable.string();
-        
+
         for (size_t i = 0; i < m_commandArguments.size(); i++)
         {
             ArgV += " " + m_commandArguments[i];
@@ -114,6 +122,51 @@ bool Application::m_findExecutable(std::string &command, fs::path &result)
         }
     }
     return false;
+}
+
+// Unnecessary function due to my lack of knowledge of fs::current_path()
+// Left it in here just to keep myself humble
+fs::path Application::m_get_current_directory()
+{
+#ifdef _WIN32
+
+    std::function<fs::path(DWORD &)> getDir = [&getDir](const DWORD &bufferSize) -> fs::path
+    {
+        TCHAR *buffer = new TCHAR[bufferSize]; // Dynamically allocate memory
+
+        DWORD dwRet = GetCurrentDirectory(bufferSize, buffer);
+
+        if (dwRet == 0)
+        {
+            printf("GetCurrentDirectory failed (%d)\n", GetLastError());
+            delete[] buffer; // Free dynamically allocated memory
+            return "";
+        }
+        else if (dwRet > bufferSize)
+        {
+            delete[] buffer;      // Free dynamically allocated memory
+            return getDir(dwRet); // Call recursively with a buffer the size of the path including \0
+        }
+        else
+        {
+            tstring str(buffer);
+            delete[] buffer;
+            return fs::path(str);
+        }
+    };
+
+    DWORD bufferSize = MAX_PATH;
+
+    return getDir(bufferSize);
+
+#else
+    char *buffer[MAX_PATH];
+    if (getcwd(buffer, size) != NULL)
+    {
+        std::string str(buffer);
+        return fs::path(str);
+    };
+#endif
 }
 
 void Application::m_type()
@@ -169,4 +222,29 @@ void Application::m_echo()
             std::cout << response << std::endl;
         }
     }
+}
+
+void Application::m_pwd()
+{
+    std::cout << m_currentWorkingDirectory.string() << std::endl;
+}
+
+void Application::m_cd()
+{
+    fs::path newPath{};
+
+    if (m_commandArguments.size() > 0)
+    {
+        newPath = m_commandArguments[0];
+    };
+
+    if (fs::is_directory(newPath) && fs::exists(newPath))
+    {
+        fs::current_path(newPath);
+        m_currentWorkingDirectory = newPath;
+        return;
+    }
+    
+
+    std::cout << "cd: " << newPath.string() << "No such file or directory" << std::endl;
 }
