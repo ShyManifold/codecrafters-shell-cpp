@@ -11,15 +11,14 @@
 
 #ifdef _WIN32
 #include <windows.h>
-#else
-#include <unistd.h>
-#include <limits.h>
-#endif
-
 #ifdef UNICODE
 typedef std::wstring tstring;
 #else
 typedef std::string tstring;
+#endif
+#else
+#include <unistd.h>
+#include <limits.h>
 #endif
 
 namespace fs = std::filesystem;
