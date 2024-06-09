@@ -202,5 +202,5 @@ void Application::m_cd()
     }
     
 
-    std::cout << "cd: " << newPath.string() << " No such file or directory" << std::endl;
+    std::cout <<newPath.string() << ": No such file or directory" << std::endl;
 }
