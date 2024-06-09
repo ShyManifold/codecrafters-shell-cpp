@@ -160,7 +160,7 @@ fs::path Application::m_get_current_directory()
     return getDir(bufferSize);
 
 #else
-    char *buffer[MAX_PATH];
+    char *buffer[4096];
     if (getcwd(buffer, size) != NULL)
     {
         std::string str(buffer);
