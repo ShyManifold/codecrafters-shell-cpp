@@ -124,50 +124,6 @@ bool Application::m_findExecutable(std::string &command, fs::path &result)
     return false;
 }
 
-// Unnecessary function due to my lack of knowledge of fs::current_path()
-// Left it in here just to keep myself humble
-fs::path Application::m_get_current_directory()
-{
-#ifdef _WIN32
-
-    std::function<fs::path(DWORD &)> getDir = [&getDir](const DWORD &bufferSize) -> fs::path
-    {
-        TCHAR *buffer = new TCHAR[bufferSize]; // Dynamically allocate memory
-
-        DWORD dwRet = GetCurrentDirectory(bufferSize, buffer);
-
-        if (dwRet == 0)
-        {
-            printf("GetCurrentDirectory failed (%d)\n", GetLastError());
-            delete[] buffer; // Free dynamically allocated memory
-            return "";
-        }
-        else if (dwRet > bufferSize)
-        {
-            delete[] buffer;      // Free dynamically allocated memory
-            return getDir(dwRet); // Call recursively with a buffer the size of the path including \0
-        }
-        else
-        {
-            tstring str(buffer);
-            delete[] buffer;
-            return fs::path(str);
-        }
-    };
-
-    DWORD bufferSize = MAX_PATH;
-
-    return getDir(bufferSize);
-
-#else
-    char *buffer[4096];
-    if (getcwd(buffer, size) != NULL)
-    {
-        std::string str(buffer);
-        return fs::path(str);
-    };
-#endif
-}
 
 void Application::m_type()
 {

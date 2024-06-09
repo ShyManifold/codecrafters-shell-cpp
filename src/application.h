@@ -24,8 +24,6 @@ private:
     void m_call();
     bool m_findExecutable(std::string &command, fs::path &result);
 
-    fs::path m_get_current_directory();
-
     // Command response functions
     void m_type();
     void m_echo();
