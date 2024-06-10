@@ -157,7 +157,7 @@ std::string Application::m_getEnvironmentVariable(const char *envVariable)
     return result;
 #else
     const char *buffer = std::getenv(envVariable);
-    if (value == nullptr)
+    if (buffer == nullptr)
     {
         std::cout << "Failed to retrieve environment variable" << std::endl;
         return "";
