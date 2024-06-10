@@ -203,9 +203,9 @@ void Application::m_cd()
         }
         else
         {
-            fs::path totalPath = m_currentWorkingDirectory / newPath;
-            fs::current_path(totalPath);
-            m_currentWorkingDirectory = totalPath;
+            newPath = fs::canonical(newPath);
+            fs::current_path(newPath);
+            m_currentWorkingDirectory = newPath;
         }
 
         return;
