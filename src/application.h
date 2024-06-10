@@ -23,6 +23,7 @@ private:
     void m_fetch();
     void m_call();
     bool m_findExecutable(std::string &command, fs::path &result);
+    std::string m_getEnvironmentVariable(const char *envVariable);
 
     // Command response functions
     void m_type();
