@@ -124,7 +124,6 @@ bool Application::m_findExecutable(std::string &command, fs::path &result)
     return false;
 }
 
-
 void Application::m_type()
 {
     bool found = false;
@@ -196,11 +195,21 @@ void Application::m_cd()
 
     if (fs::is_directory(newPath) && fs::exists(newPath))
     {
-        fs::current_path(newPath);
-        m_currentWorkingDirectory = newPath;
+        if (newPath.is_absolute())
+        {
+
+            fs::current_path(newPath);
+            m_currentWorkingDirectory = newPath;
+        }
+        else
+        {
+            fs::path totalPath = m_currentWorkingDirectory / newPath;
+            fs::current_path(totalPath);
+            m_currentWorkingDirectory = totalPath;
+        }
+
         return;
     }
-    
 
-    std::cout <<newPath.string() << ": No such file or directory" << std::endl;
+    std::cout << newPath.string() << ": No such file or directory" << std::endl;
 }
