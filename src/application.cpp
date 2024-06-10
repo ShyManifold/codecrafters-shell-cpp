@@ -126,27 +126,28 @@ bool Application::m_findExecutable(std::string &command, fs::path &result)
 
 std::string Application::m_getEnvironmentVariable(const char *envVariable)
 {
+#ifdef _WIN32
     char *value;
     size_t len;
 
     // Determine the required buffer size
     if (_dupenv_s(&value, &len, envVariable) != 0)
     {
-        printf("Failed to retrieve environment variable\n");
+        std::cout << "Failed to retrieve environment variable" << std::endl;
         return {};
     }
 
     char *buffer = (char *)malloc(len * sizeof(char));
     if (buffer == NULL)
     {
-        printf("Failed to allocate memory\n");
+        std::cout << "Failed to allocate memory" << std::endl;
         return {};
     }
 
     if (_dupenv_s(&buffer, &len, envVariable) != 0)
     {
         // Handle error
-        printf("Failed to retrieve environment variable\n");
+        std::cout << "Failed to retrieve environment variable" << std::endl;
         free(buffer);
         return {};
     }
@@ -154,6 +155,15 @@ std::string Application::m_getEnvironmentVariable(const char *envVariable)
     std::string result = buffer;
     free(buffer);
     return result;
+#else
+    const char *buffer = std::getenv(envVariable);
+    if (value == nullptr)
+    {
+        std::cout << "Failed to retrieve environment variable" << std::endl;
+        return "";
+    }
+    return std::string(buffer);
+#endif
 }
 
 void Application::m_type()
